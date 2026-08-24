@@ -1,0 +1,132 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum ProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum MessageRole {
+  system
+  user
+  assistant
+}
+
+model User  {
+  id          String @id @default(cuid())
+  name        String
+  email       String @unique
+  password    String
+
+  workspaces Workspace[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Workspace{
+  id            String @id @default(cuid())
+
+  name          String
+  description   String?
+
+  userId   String 
+  user     User @relation(fields: [userId],references: [id],onDelete: Cascade)
+  
+  documents  Document[]
+  chats      Chat[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Document {
+  id               String @id @default(cuid())
+
+  name             String
+  mimeType         String
+  extension        String
+  filePath         String
+  size             Int
+  extractedText    String?
+  processingStatus ProcessingStatus @default(PENDING)
+
+  workspaceId      String
+  workspace        Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId])
+
+  chunks DocumentChunk[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model DocumentChunk{
+  id          String @id @default(cuid())
+  content      String
+  chunkIndex  Int
+
+  documentId  String
+  document    Document @relation(fields: [documentId],references: [id],onDelete: Cascade)
+
+  embedding   DocumentChunkEmbedding?
+
+  @@index([documentId])
+
+  createdAt DateTime @default(now())
+}
+
+model Chat{
+  id        String @id @default(cuid())
+  title      String
+
+  workspaceId  String
+  workspace Workspace @relation(fields: [workspaceId],references: [id],onDelete: Cascade)
+
+  messages Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Message{
+  id    String     @id @default(cuid())
+  
+  chatId   String 
+  chat     Chat @relation(fields: [chatId],references: [id],onDelete: Cascade)
+
+  role      MessageRole
+  content   String
+
+  tokens    Int?
+  model     String?
+
+  createdAt DateTime @default(now())
+}
+
+model DocumentChunkEmbedding {
+  id              String @id @default(cuid())
+
+  documentChunkId String @unique
+  documentChunk   DocumentChunk @relation(fields: [documentChunkId], references: [id], onDelete: Cascade)
+
+  model           String
+  
+  embedding       Unsupported("vector(768)")
+
+  createdAt       DateTime @default(now())
+}
