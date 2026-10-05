@@ -18,16 +18,17 @@ export function authMiddleware(
         throw new AppError(401, "Token requerido");
     }
 
-    const token = authHeader.split(" ")[1];
+    const [type, token] = authHeader.split(" ");
 
-    if (!token) {
+    if (type !== "Bearer" || !token) {
         throw new AppError(401, "Token inválido");
     }
+
 
     try {
         const decoded = jwt.verify(
             token,
-            env.JWT_SECRET
+            env.JWT_ACCESS_SECRET
         ) as JwtPayload;
 
         req.user = {
