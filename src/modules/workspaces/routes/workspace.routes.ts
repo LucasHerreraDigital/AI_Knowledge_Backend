@@ -5,13 +5,14 @@ import {
   createWorkspaceSchema,
   updateWorkspaceSchema,
 } from "../schemas/workspace.schema.js";
+import { authMiddleware } from "../../../middlewares/auth.middleware.js";
 
 const router = Router();
+router.use(authMiddleware)
 
 const controller = new WorkspaceController();
 
 router.get("/", controller.getWorkspaces);
-router.get("/user/:userId", controller.getWorkspaceByUser);
 router.get("/:id", controller.getWorkspaceById);
 
 router.post(

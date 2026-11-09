@@ -1,12 +1,17 @@
 import { ChatService } from "../services/chat.service.js";
 import { asyncHandler } from "../../../shared/utils/asyncHandler.js";
+import { AppError } from "../../../shared/errors/AppError.js";
 
 export class ChatController {
     private readonly service = new ChatService()
 
     getChatById = asyncHandler(async(req,res)=>{
+        if(!req.user){
+            throw new AppError(401,"No Autenticado")
+        }
+        const userId = req.user.id
         const {id} = req.params as {id:string}
-        const chat = await this.service.getChatById(id)
+        const chat = await this.service.getChatById(id,userId)
         return res.status(200).json(chat)
     })
 
@@ -23,8 +28,12 @@ export class ChatController {
     })
 
     getChatByIdWithWorkspace = asyncHandler(async(req,res)=>{
+        if(!req.user){
+            throw new AppError(401,"No Autenticado")
+        }
+        const userId = req.user.id
         const {id} = req.params as {id:string}
-        const chat = await this.service.getChatByIdWithWorkspace(id)
+        const chat = await this.service.getChatByIdWithWorkspace(id,userId)
         return res.status(200).json(chat)
     })
 
@@ -36,11 +45,12 @@ export class ChatController {
     })
 
     createChat = asyncHandler(async(req,res)=>{
+        const {workspaceId} = req.params as {workspaceId: string}
         const userId = req.user!.id
         const chat = await this.service.createChat({
             ...req.body
         },
-        userId)
+        userId,workspaceId)
         return res.status(201).json(chat)
     })
 
@@ -61,14 +71,14 @@ export class ChatController {
     createMessage = asyncHandler(async(req,res)=>{
         const { id } = req.params as { id:string }
         const userId = req.user!.id
-        const message = await this.service.createMessage(
+        const result = await this.service.createMessage(
             {
                 chatId:id,
-                ...req.body
+                content:req.body.content
             },
             userId
         )
-        return res.status(201).json(message)
+        return res.status(201).json(result)
     })
 
     getMessagesByChat = asyncHandler(async(req,res)=>{

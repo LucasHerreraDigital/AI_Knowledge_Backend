@@ -80,6 +80,7 @@ model DocumentChunk{
   id          String @id @default(cuid())
   content      String
   chunkIndex  Int
+  pageNumber Int?
 
   documentId  String
   document    Document @relation(fields: [documentId],references: [id],onDelete: Cascade)

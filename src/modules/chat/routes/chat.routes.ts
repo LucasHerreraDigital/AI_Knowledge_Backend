@@ -14,7 +14,7 @@ const controller = new ChatController();
 
 router.use(authMiddleware);
 
-router.post("/", validate(createChatSchema), controller.createChat);
+router.post("/workspace/:workspaceId", validate(createChatSchema), controller.createChat);
 
 router.get("/search",controller.searchChats)
 

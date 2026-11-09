@@ -12,9 +12,25 @@ export class DocumentRepository {
     });
   }
 
-  async findByWorkspace(workspaceId: string) {
+  async findByIdAndUser(id: string,userId:string){
+    return prisma.document.findFirst({
+      where:{
+        id,
+        workspace:{
+          userId
+        }
+      }
+    })
+  }
+
+  async findByWorkspace(workspaceId: string,userId:string) {
     return prisma.document.findMany({
-      where: { workspaceId },
+      where: { 
+        workspaceId,
+        workspace:{
+          userId
+        }
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -36,7 +52,9 @@ export class DocumentRepository {
 
   async delete(id: string) {
     return prisma.document.delete({
-      where: { id },
+      where: { 
+        id
+       },
     });
   }
 

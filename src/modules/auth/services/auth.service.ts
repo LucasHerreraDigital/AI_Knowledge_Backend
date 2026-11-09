@@ -5,8 +5,6 @@ import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { LoginDTO, RegisterDTO } from "../schemas/auth.schema.js";
 import { SessionRepository } from "../repositories/session.repository.js";
-import { th } from "zod/locales";
-import { decode } from "node:punycode";
 
 interface RefreshTokenPayload {
   userId: string;
@@ -173,5 +171,15 @@ export class AuthService {
         }
 
         await this.sessionRepository.revoke(payload.sessionId)
+    }
+
+    async me(userId:string){
+        const user = await this.repository.findById(userId)
+        if(!user){
+            throw new AppError(404, "Usuario no encontrado")
+        }
+        const {password, ...userWithoutPassword } = user
+
+        return userWithoutPassword 
     }
 }

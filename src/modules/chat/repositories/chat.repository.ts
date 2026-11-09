@@ -6,9 +6,14 @@ type CreateChatDTO = Prisma.ChatUncheckedCreateInput;
 type UpdateChatDTO = Prisma.ChatUncheckedUpdateInput;
 
 export class ChatRepository {
-  async findById(id: string) {
+  async findByIdAndUser(id: string,userId:string) {
     return prisma.chat.findUnique({
-      where: { id },
+      where: { 
+        id,
+        workspace:{
+          userId
+        }
+       },
       include: {
         messages: {
           orderBy: {
@@ -69,9 +74,14 @@ export class ChatRepository {
     });
   }
 
-  async findByIdWithWorkspace(id: string) {
-    return prisma.chat.findUnique({
-      where: { id },
+  async findByIdWithWorkspace(id: string,userId:string) {
+    return prisma.chat.findFirst({
+      where: { 
+        id,
+        workspace:{
+          userId
+        }
+       },
       include: {
         workspace: true,
         messages: {
@@ -110,16 +120,26 @@ export class ChatRepository {
     });
   }
 
-  async update(id: string, data: UpdateChatDTO) {
+  async update(id: string, data: UpdateChatDTO, userId: string ) {
     return prisma.chat.update({
-      where: { id },
+      where: { 
+        id,
+        workspace:{
+          userId
+        }
+       },
       data,
     });
   }
 
-  async delete(id: string) {
+  async delete(id: string, userId: string ) {
     return prisma.chat.delete({
-      where: { id },
+      where: { 
+        id,
+        workspace:{
+          userId
+        }
+       },
     });
   }
 }

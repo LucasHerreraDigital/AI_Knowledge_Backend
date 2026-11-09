@@ -1,22 +1,15 @@
 import { z } from "zod";
 
 export const createChatSchema = z.object({
-    workspaceId: z.string().min(1, "El workspaceId es obligatorio"),
-    title: z.string().min(1, "El título es obligatorio").optional(),
-});
+    title: z.string().trim().min(1,"El título es obligatorio"),
+}).strict();
 
 
 export const updateChatSchema = z.object({
-    title: z.string().min(1, "El título es obligatorio").optional(),
-});
+    title: z.string().trim().min(1, "El título es obligatorio"),
+}).strict();
 
 
 export const createMessageSchema = z.object({
-    role: z.enum([
-        "user",
-        "assistant"
-    ]),
-    content: z.string().min(1, "El contenido es obligatorio"),
-    tokens: z.number().int().positive().optional(),
-    model: z.string().optional(),
-});
+    content: z.string().trim().min(1,"El contenido es obligatorio"),
+}).strict();

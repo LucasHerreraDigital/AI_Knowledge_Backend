@@ -36,6 +36,29 @@ export class AuthController{
     })
 
     logout = asyncHandler(async(req,res)=>{
-         
+         const refreshToken = req.cookies.refreshToken;
+        
+        if(refreshToken){
+            await this.service.logout(refreshToken)
+        }
+        res.clearCookie("refreshToken",
+                {
+                    httpOnly:  true,
+                    secure: env.NODE_ENV === "production",
+                    sameSite: "lax",
+                }
+            )
+
+        return res.status(204).send()
+    })
+
+    me = asyncHandler(async(req,res)=>{
+        if(!req.user){
+            throw new AppError(401,"No autorizado")
+        }
+        const userId = req.user.id
+        const user = await this.service.me(userId)
+        res.status(200).send(user)
+
     })
 }

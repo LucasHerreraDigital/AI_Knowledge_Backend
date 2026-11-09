@@ -19,8 +19,8 @@ export class DocumentService {
   private readonly documentChunkRepository = new DocumentChunkRepository()
   private readonly embeddingService = new EmbeddingService();
 
-  async getDocumentById(id: string) {
-    const document = await this.repository.findById(id);
+  async getDocumentById(id: string, userId:string) {
+    const document = await this.repository.findByIdAndUser(id,userId);
 
     if (!document) {
       throw new AppError(404, "Documento no encontrado");
@@ -29,8 +29,8 @@ export class DocumentService {
     return document;
   }
 
-  async getDocumentsByWorkspace(workspaceId: string) {
-    return this.repository.findByWorkspace(workspaceId);
+  async getDocumentsByWorkspace(workspaceId: string,userId:string) {
+    return this.repository.findByWorkspace(workspaceId,userId);
   }
 
   async createDocument(data: CreateDocumentDto & {
@@ -39,8 +39,8 @@ export class DocumentService {
     extension: string;
     size: number;
     filePath: string;
-  }) {
-    const workspace = await this.workspaceRepository.findById(data.workspaceId);
+  },userId:string) {
+    const workspace = await this.workspaceRepository.findByIdAndUser(data.workspaceId,userId);
 
     if (!workspace) {
       throw new AppError(404, "Workspace no encontrado");
@@ -52,17 +52,22 @@ export class DocumentService {
     });
 
     try {
-      const extractedText = await this.pdfProcessor.extractText(
+      const extractedPages = await this.pdfProcessor.extractText(
         document.filePath
       );
 
-      const textChunked = this.textChunker.split(extractedText)
+      const extractedText = extractedPages
+        .map((page) => page.content)
+        .join("\n\n");
 
-      for (let i = 0; i < textChunked.length; i++) {
+      const textChunked = this.textChunker.split(extractedPages);
+
+      for (const chunkData of textChunked) {
         const chunk = await this.documentChunkRepository.create({
           documentId: document.id,
-          content: textChunked[i],
-          chunkIndex: i,
+          content: chunkData.content,
+          chunkIndex: chunkData.chunkIndex,
+          pageNumber: chunkData.pageNumber,
         });
 
         await this.embeddingService.createEmbedding(
@@ -96,8 +101,8 @@ export class DocumentService {
     return this.repository.update(id, data);
   }
 
-  async deleteDocument(id: string) {
-    const document = await this.repository.findById(id);
+  async deleteDocument(id: string,userId:string) {
+    const document = await this.repository.findByIdAndUser(id,userId);
   
     if (!document) {
       throw new AppError(404, "Documento no encontrado");

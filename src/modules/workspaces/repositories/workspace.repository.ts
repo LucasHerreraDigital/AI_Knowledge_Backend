@@ -5,17 +5,22 @@ import {
 } from "../schemas/workspace.schema.js";
 
 export class WorkspaceRepository {
-  async findAll() {
-    return prisma.workspace.findMany({
-      include: {
-        _count: {
-          select: {
-            documents: true,
-            chats: true,
-          },
-        },
+
+  async findByIdAndUser(id:string,userId:string){
+    return prisma.workspace.findFirst({
+      where: {
+        userId,
+        id
       },
-    });
+      include:{
+        _count:{
+          select:{
+            documents:true,
+            chats:true
+          }
+        }
+      }
+    })
   }
 
   async findAllByUser(userId: string) {
@@ -49,25 +54,10 @@ export class WorkspaceRepository {
     });
   }
 
-  async findById(id: string) {
-    return prisma.workspace.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        _count: {
-          select: {
-            documents: true,
-            chats: true,
-          },
-        },
-      },
-    });
-  }
 
-  async create(data: CreateWorkspaceDTO) {
+  async create(data: CreateWorkspaceDTO,userId:string) {
     return prisma.workspace.create({
-      data,
+      data:{...data,userId},
       include: {
         _count: {
           select: {

@@ -5,45 +5,41 @@ import { CreateWorkspaceDTO, UpdateWorkspaceDTO } from "../schemas/workspace.sch
 export class WorkspaceService{
     private readonly repository = new WorkspaceRepository()
 
-    async getWorkspaces(){
-        return this.repository.findAll()
+    async getWorkspaces(userId:string){
+        return this.repository.findAllByUser(userId)
         
     }
 
-    async getWorkspaceByUser(userId:string){
-        return this.repository.findAllByUser(userId)
-    }
-
-    async getWorkspaceById(id:string){
-        const workspace = await this.repository.findById(id)
+    async getWorkspaceById(id:string,userId:string){
+        const workspace = await this.repository.findByIdAndUser(id,userId)
         if(!workspace){
             throw new AppError(404,"Workspace no encontrado")
         }
         return workspace
     }
 
-    async createWorkspace(data:CreateWorkspaceDTO){
+    async createWorkspace(data:CreateWorkspaceDTO,userId:string){
         const workspace = await this.repository.findByUserAndName(
             data.name,
-            data.userId
+            userId
         )
         if(workspace){
             throw new AppError(409, "Ya existe un workspace con ese nombre")
         }
         
-        return this.repository.create(data)
+        return this.repository.create(data,userId)
     }
 
-    async updateWorkspace(id:string,data:UpdateWorkspaceDTO){
-        const workspace = await this.repository.findById(id)
+    async updateWorkspace(id:string,data:UpdateWorkspaceDTO,userId:string){
+        const workspace = await this.repository.findByIdAndUser(id,userId)
         if(!workspace){
             throw new AppError(404,"Workspace no encontrado")
         }
         return this.repository.update(id,data)
     }
 
-    async deleteWorkspace(id:string){
-        const workspace = await this.repository.findById(id)
+    async deleteWorkspace(id:string,userId:string){
+        const workspace = await this.repository.findByIdAndUser(id,userId)
         if(!workspace){
             throw new AppError (404,"Workspace no encontrado")
         }

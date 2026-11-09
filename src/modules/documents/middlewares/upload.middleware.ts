@@ -5,7 +5,7 @@ import crypto from "node:crypto"
 
 const storage = multer.diskStorage({
     destination(req, file,cb){
-        const {workspaceId} = req.body
+        const {workspaceId} = req.params as {workspaceId:string}
         const uploadPath = path.join(
             "storage",
             "tenants",

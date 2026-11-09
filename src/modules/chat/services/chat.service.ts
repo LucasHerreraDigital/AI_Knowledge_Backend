@@ -7,8 +7,8 @@ import { AIService } from "../../ai/services/ai.service.js";
 import { RAGService } from "../../rag/services/rag.services.js";
 
 type CreateChatDTO = Prisma.ChatUncheckedCreateInput;
-type UpdateChatDTO = Prisma.ChatUncheckedUpdateInput;
-type CreateMessageDTO = Prisma.MessageUncheckedCreateInput;
+type UpdateChatDTO = {title?:string};
+type CreateMessageDTO = {chatId:string, content: string};
 
 export class ChatService {
   private readonly repository = new ChatRepository();
@@ -23,16 +23,16 @@ export class ChatService {
     return await this.repository.searchChats(query, userId)
   }
 
-  async getChatById(id: string) {
-    const chat = await this.repository.findById(id);
+  async getChatById(id: string,userId:string) {
+    const chat = await this.repository.findByIdAndUser(id,userId);
     if (!chat) {
       throw new AppError(404, "No existen chats con esa id");
     }
     return chat;
   }
 
-  async getChatByIdWithWorkspace(id: string) {
-    const chat = await this.repository.findByIdWithWorkspace(id);
+  async getChatByIdWithWorkspace(id: string,userId:string) {
+    const chat = await this.repository.findByIdWithWorkspace(id,userId);
     if (!chat) {
       throw new AppError(404, "No existen chats con esa id");
     }
@@ -40,7 +40,7 @@ export class ChatService {
   }
 
   async getChatsByWorkspace(workspaceId: string, userId: string) {
-    const workspace = await this.workspaceRepository.findById(workspaceId);
+    const workspace = await this.workspaceRepository.findByIdAndUser(workspaceId,userId);
 
     if (!workspace) {
       throw new AppError(404, "No existe un workspace con esa id");
@@ -52,45 +52,38 @@ export class ChatService {
     return this.repository.findByWorkspace(workspaceId);
   }
 
-  async createChat(data: CreateChatDTO, userId: string) {
-    const workspace = await this.workspaceRepository.findById(data.workspaceId);
+  async createChat(data: {title:string}, userId: string,workspaceId:string) {
+    const workspace = await this.workspaceRepository.findByIdAndUser(workspaceId,userId);
 
     if (!workspace) {
       throw new AppError(404, "No existe un workspace con esa id");
     }
 
-    if (workspace.userId !== userId) {
-      throw new AppError(403, "No autorizado");
-    }
-
-    return this.repository.create(data);
+    return this.repository.create({
+      title:data.title,
+      workspaceId: workspace.id
+    });
   }
 
   async updateChat(id: string, userId: string, data: UpdateChatDTO) {
-    const chat = await this.getChatByIdWithWorkspace(id);
-    if (chat.workspace.userId !== userId) {
-      throw new AppError(403, "No autorizado");
-    }
-    return this.repository.update(id, data);
+    return this.repository.update(id, {
+      title: data.title
+    },userId);
   }
 
   async deleteChat(id: string, userId: string) {
-    const chat = await this.getChatByIdWithWorkspace(id);
-
-    if (chat.workspace.userId !== userId) {
-      throw new AppError(403, "No autorizado");
-    }
-    await this.repository.delete(id);
+    await this.repository.delete(id,userId);
   }
 
   async createMessage(data: CreateMessageDTO, userId: string) {
-    const chat = await this.getChatByIdWithWorkspace(data.chatId);
-    if (chat.workspace.userId !== userId) {
-      throw new AppError(403, "No autorizado");
-    }
-    const userMessage = await this.messageRepository.createMessage(data);
+    const chat = await this.getChatByIdWithWorkspace(data.chatId,userId);
+ 
+    const userMessage = await this.messageRepository.createMessage({
+      chatId:data.chatId,
+      content:data.content,
+      role:"user"
+    });
     const history = await this.messageRepository.findLastMessages(data.chatId);
-    const context = await this.ragService.generateAnswer
     const aiResponse = await this.ragService.generateAnswer(
       chat.workspaceId,
       data.content,
@@ -104,14 +97,17 @@ export class ChatService {
         model: aiResponse.model,
     });
 
-    return this.getChatById(data.chatId);
+    const updatedChat = await this.getChatById(data.chatId,userId)
+
+    return{
+      chat: updatedChat,
+      sources: aiResponse.sources
+    }
   }
 
   async getMessagesByChat(chatId: string, userId: string) {
-    const chat = await this.getChatByIdWithWorkspace(chatId);
-    if (chat.workspace.userId !== userId) {
-      throw new AppError(403, "No autorizado");
-    }
+    const chat = await this.getChatByIdWithWorkspace(chatId,userId);
+    
     return this.messageRepository.findByChat(chatId);
   }
 }

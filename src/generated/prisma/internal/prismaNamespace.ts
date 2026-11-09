@@ -1071,6 +1071,7 @@ export const DocumentChunkScalarFieldEnum = {
   id: 'id',
   content: 'content',
   chunkIndex: 'chunkIndex',
+  pageNumber: 'pageNumber',
   documentId: 'documentId',
   createdAt: 'createdAt'
 } as const

@@ -5,6 +5,11 @@ export type SimilarChunk = {
     id: string;
     content: string;
     distance: number;
+
+    documentId: string,
+    documentName: string,
+    pageNumber: number | null,
+    chunkIndex:number,
 };
 
 export class EmbeddingRepository {
@@ -25,14 +30,24 @@ export class EmbeddingRepository {
     );
   }
 
-  async searchSimilar(workspaceId:string,embedding:number[],limit = 5): Promise<SimilarChunk[]>{
+  async searchSimilar(
+    workspaceId: string,
+    embedding: number[],
+    limit = 5
+  ): Promise<SimilarChunk[]> {
     const vector = `[${embedding.join(",")}]`;
-    return prisma.$queryRawUnsafe(
+
+    return prisma.$queryRawUnsafe<SimilarChunk[]>(
       `
       SELECT
         dc.id,
         dc.content,
-        dce.embedding <=> $1::vector AS distance
+        dce.embedding <=> $1::vector AS distance,
+
+        dc."documentId" AS "documentId",
+        d.name AS "documentName",
+        dc."pageNumber" AS "pageNumber",
+        dc."chunkIndex" AS "chunkIndex"
 
       FROM "DocumentChunkEmbedding" dce
 

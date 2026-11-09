@@ -1,17 +1,38 @@
+import type { ExtractedPage } from "./pdf.processor.js";
+
+export interface DocumentChunkData {
+  content: string;
+  chunkIndex: number;
+  pageNumber: number;
+}
+
 export class TextChunker {
-  split(text: string, chunkSize = 1000, overlap = 200): string[] {
-    const chunks: string[] = [];
+  split(
+    pages: ExtractedPage[],
+    chunkSize = 1000,
+    overlap = 200
+  ): DocumentChunkData[] {
+    const chunks: DocumentChunkData[] = [];
 
-    let start = 0;
+    let globalIndex = 0;
 
-    while (start < text.length) {
-      const end = Math.min(start + chunkSize, text.length);
+    for (const page of pages) {
+      const text = page.content;
+      let start = 0;
 
-      chunks.push(text.slice(start, end));
+      while (start < text.length) {
+        const end = Math.min(start + chunkSize, text.length);
 
-      if (end === text.length) break;
+        chunks.push({
+          content: text.slice(start, end),
+          chunkIndex: globalIndex++,
+          pageNumber: page.pageNumber,
+        });
 
-      start = end - overlap;
+        if (end === text.length) break;
+
+        start = end - overlap;
+      }
     }
 
     return chunks;
