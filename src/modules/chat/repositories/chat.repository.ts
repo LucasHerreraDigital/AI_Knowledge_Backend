@@ -18,6 +18,8 @@ export class ChatRepository {
         messages: {
           orderBy: {
             createdAt: "asc",
+          },include:{
+            sources:true
           },
         },
       },

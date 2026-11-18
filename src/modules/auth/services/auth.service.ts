@@ -145,7 +145,7 @@ export class AuthService {
         };
     }
 
-    async logout(refreshToken:string){
+    async logout(refreshToken:string,userId:string){
 
         let payload: RefreshTokenPayload;
 
@@ -169,8 +169,16 @@ export class AuthService {
         }catch{
             throw new AppError(401,"Refresh token inválido o expirado")
         }
-
-        await this.sessionRepository.revoke(payload.sessionId)
+        if(payload.userId !== userId){
+            throw new AppError(401,"No autorizado")
+        }
+        const result = await this.sessionRepository.revoke(
+            payload.sessionId,
+            userId
+        )
+        if (result.count === 0) {
+            throw new AppError(401, "Sesión no válida");
+        }
     }
 
     async me(userId:string){

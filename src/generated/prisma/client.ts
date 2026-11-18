@@ -72,6 +72,11 @@ export type Chat = Prisma.ChatModel
  */
 export type Message = Prisma.MessageModel
 /**
+ * Model MessageSource
+ * 
+ */
+export type MessageSource = Prisma.MessageSourceModel
+/**
  * Model DocumentChunkEmbedding
  * 
  */

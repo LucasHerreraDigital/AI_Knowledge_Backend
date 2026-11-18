@@ -16,9 +16,9 @@ export class SessionRepository {
     });
   }
 
-  async revoke(id: string) {
+  async revoke(id: string,userId: string) {
     return prisma.session.updateMany({
-      where: { id , revokedAt: null },
+      where: { id ,userId ,revokedAt: null },
       data: {
         revokedAt: new Date(),
       },

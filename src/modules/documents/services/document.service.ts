@@ -10,6 +10,8 @@ import { TextChunker } from "../processors/text-chunker.js";
 import { DocumentChunkRepository } from "../repositories/documentChunk.repository.js";
 import { EmbeddingService } from "../../embeddings/services/embedding.service.js";
 import fs from "fs/promises";
+import removeFile from "../../../shared/utils/removeFile.js";
+import { Document } from "../../../generated/prisma/client.js";
 
 export class DocumentService {
   private readonly repository = new DocumentRepository();
@@ -33,25 +35,33 @@ export class DocumentService {
     return this.repository.findByWorkspace(workspaceId,userId);
   }
 
-  async createDocument(data: CreateDocumentDto & {
-    name: string;
-    mimeType: string;
-    extension: string;
-    size: number;
-    filePath: string;
-  },userId:string) {
-    const workspace = await this.workspaceRepository.findByIdAndUser(data.workspaceId,userId);
-
-    if (!workspace) {
-      throw new AppError(404, "Workspace no encontrado");
-    }
-
-    const document = await this.repository.create({
-      ...data,
-      processingStatus: "PENDING",
-    });
+  async createDocument(
+    data: CreateDocumentDto & {
+      name: string;
+      mimeType: string;
+      extension: string;
+      size: number;
+      filePath: string;
+    },
+    userId: string
+  ) {
+    let document: Document | null = null;
 
     try {
+      const workspace = await this.workspaceRepository.findByIdAndUser(
+        data.workspaceId,
+        userId
+      );
+
+      if (!workspace) {
+        throw new AppError(404, "Workspace no encontrado");
+      }
+
+      document = await this.repository.create({
+        ...data,
+        processingStatus: "PENDING",
+      });
+
       const extractedPages = await this.pdfProcessor.extractText(
         document.filePath
       );
@@ -76,23 +86,40 @@ export class DocumentService {
         );
       }
 
-      const updatedDocument = await this.repository.update(document.id, {
+      return await this.repository.update(document.id, {
         extractedText,
         processingStatus: "COMPLETED",
       });
 
-      return updatedDocument;
     } catch (error) {
-      await this.repository.update(document.id, {
-        processingStatus: "FAILED",
-      });
+
+      // Eliminar registros parciales
+      if (document) {
+        try {
+          await this.documentChunkRepository.deleteByDocumentId(
+            document.id
+          );
+
+          await this.repository.delete(document.id);
+
+        } catch (cleanupError) {
+          console.error("Error limpiando registros:", cleanupError);
+        }
+      }
+
+      // Eliminar archivo físico
+      try {
+        await removeFile(data.filePath);
+      } catch (cleanupError) {
+        console.error("Error eliminando archivo:", cleanupError);
+      }
 
       throw error;
     }
   }
 
-  async updateDocument(id: string, data: UpdateDocumentDTO) {
-    const document = await this.repository.findById(id);
+  async updateDocument(id: string,userId:string, data: UpdateDocumentDTO) {
+    const document = await this.repository.findByIdAndUser(id,userId);
 
     if (!document) {
       throw new AppError(404, "Documento no encontrado");

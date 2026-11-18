@@ -390,6 +390,7 @@ export const ModelName = {
   DocumentChunk: 'DocumentChunk',
   Chat: 'Chat',
   Message: 'Message',
+  MessageSource: 'MessageSource',
   DocumentChunkEmbedding: 'DocumentChunkEmbedding',
   Session: 'Session'
 } as const
@@ -407,7 +408,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "workspace" | "document" | "documentChunk" | "chat" | "message" | "documentChunkEmbedding" | "session"
+    modelProps: "user" | "workspace" | "document" | "documentChunk" | "chat" | "message" | "messageSource" | "documentChunkEmbedding" | "session"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -855,6 +856,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MessageSource: {
+      payload: Prisma.$MessageSourcePayload<ExtArgs>
+      fields: Prisma.MessageSourceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MessageSourceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MessageSourceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload>
+        }
+        findFirst: {
+          args: Prisma.MessageSourceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MessageSourceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload>
+        }
+        findMany: {
+          args: Prisma.MessageSourceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload>[]
+        }
+        create: {
+          args: Prisma.MessageSourceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload>
+        }
+        createMany: {
+          args: Prisma.MessageSourceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MessageSourceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload>[]
+        }
+        delete: {
+          args: Prisma.MessageSourceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload>
+        }
+        update: {
+          args: Prisma.MessageSourceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload>
+        }
+        deleteMany: {
+          args: Prisma.MessageSourceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MessageSourceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MessageSourceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload>[]
+        }
+        upsert: {
+          args: Prisma.MessageSourceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageSourcePayload>
+        }
+        aggregate: {
+          args: Prisma.MessageSourceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMessageSource>
+        }
+        groupBy: {
+          args: Prisma.MessageSourceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageSourceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MessageSourceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageSourceCountAggregateOutputType> | number
+        }
+      }
+    }
     DocumentChunkEmbedding: {
       payload: Prisma.$DocumentChunkEmbeddingPayload<ExtArgs>
       fields: Prisma.DocumentChunkEmbeddingFieldRefs
@@ -1101,6 +1176,21 @@ export const MessageScalarFieldEnum = {
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MessageSourceScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  documentChunkId: 'documentChunkId',
+  documentId: 'documentId',
+  content: 'content',
+  documentName: 'documentName',
+  pageNumber: 'pageNumber',
+  chunkIndex: 'chunkIndex',
+  distance: 'distance'
+} as const
+
+export type MessageSourceScalarFieldEnum = (typeof MessageSourceScalarFieldEnum)[keyof typeof MessageSourceScalarFieldEnum]
 
 
 export const DocumentChunkEmbeddingScalarFieldEnum = {
@@ -1354,6 +1444,7 @@ export type GlobalOmitConfig = {
   documentChunk?: Prisma.DocumentChunkOmit
   chat?: Prisma.ChatOmit
   message?: Prisma.MessageOmit
+  messageSource?: Prisma.MessageSourceOmit
   documentChunkEmbedding?: Prisma.DocumentChunkEmbeddingOmit
   session?: Prisma.SessionOmit
 }

@@ -78,7 +78,7 @@ export class ChatService {
   async createMessage(data: CreateMessageDTO, userId: string) {
     const chat = await this.getChatByIdWithWorkspace(data.chatId,userId);
  
-    const userMessage = await this.messageRepository.createMessage({
+    await this.messageRepository.createMessage({
       chatId:data.chatId,
       content:data.content,
       role:"user"
@@ -89,13 +89,13 @@ export class ChatService {
       data.content,
       history
     )
-    await this.messageRepository.createMessage({
+    await this.messageRepository.createMessageWithSources({
         chatId: data.chatId,
         role: "assistant",
         content: aiResponse.content,
         tokens: aiResponse.tokens,
         model: aiResponse.model,
-    });
+    },aiResponse.sources);
 
     const updatedChat = await this.getChatById(data.chatId,userId)
 
@@ -106,8 +106,7 @@ export class ChatService {
   }
 
   async getMessagesByChat(chatId: string, userId: string) {
-    const chat = await this.getChatByIdWithWorkspace(chatId,userId);
-    
+    await this.getChatByIdWithWorkspace(chatId,userId);
     return this.messageRepository.findByChat(chatId);
   }
 }

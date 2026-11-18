@@ -57,6 +57,7 @@ export const ModelName = {
   DocumentChunk: 'DocumentChunk',
   Chat: 'Chat',
   Message: 'Message',
+  MessageSource: 'MessageSource',
   DocumentChunkEmbedding: 'DocumentChunkEmbedding',
   Session: 'Session'
 } as const
@@ -152,6 +153,21 @@ export const MessageScalarFieldEnum = {
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MessageSourceScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  documentChunkId: 'documentChunkId',
+  documentId: 'documentId',
+  content: 'content',
+  documentName: 'documentName',
+  pageNumber: 'pageNumber',
+  chunkIndex: 'chunkIndex',
+  distance: 'distance'
+} as const
+
+export type MessageSourceScalarFieldEnum = (typeof MessageSourceScalarFieldEnum)[keyof typeof MessageSourceScalarFieldEnum]
 
 
 export const DocumentChunkEmbeddingScalarFieldEnum = {

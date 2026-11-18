@@ -36,19 +36,29 @@ export class AuthController{
     })
 
     logout = asyncHandler(async(req,res)=>{
-         const refreshToken = req.cookies.refreshToken;
-        
-        if(refreshToken){
-            await this.service.logout(refreshToken)
+        if(!req.user){
+            throw new AppError(401,"No Autenticado")
         }
-        res.clearCookie("refreshToken",
+        const userId = req.user.id
+        const refreshToken = req.cookies.refreshToken;
+
+        try{
+            if(refreshToken){
+                await this.service.logout(refreshToken,userId)
+            }
+        }catch(err){
+            if (!(err instanceof AppError && err.statusCode === 401)) {
+            throw err;
+        }
+        }finally{
+            res.clearCookie("refreshToken",
                 {
                     httpOnly:  true,
                     secure: env.NODE_ENV === "production",
                     sameSite: "lax",
                 }
             )
-
+        }
         return res.status(204).send()
     })
 

@@ -230,6 +230,7 @@ export type DocumentChunkWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"DocumentChunk"> | Date | string
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
   embedding?: Prisma.XOR<Prisma.DocumentChunkEmbeddingNullableScalarRelationFilter, Prisma.DocumentChunkEmbeddingWhereInput> | null
+  sources?: Prisma.MessageSourceListRelationFilter
 }
 
 export type DocumentChunkOrderByWithRelationInput = {
@@ -241,6 +242,7 @@ export type DocumentChunkOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   document?: Prisma.DocumentOrderByWithRelationInput
   embedding?: Prisma.DocumentChunkEmbeddingOrderByWithRelationInput
+  sources?: Prisma.MessageSourceOrderByRelationAggregateInput
 }
 
 export type DocumentChunkWhereUniqueInput = Prisma.AtLeast<{
@@ -255,6 +257,7 @@ export type DocumentChunkWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"DocumentChunk"> | Date | string
   document?: Prisma.XOR<Prisma.DocumentScalarRelationFilter, Prisma.DocumentWhereInput>
   embedding?: Prisma.XOR<Prisma.DocumentChunkEmbeddingNullableScalarRelationFilter, Prisma.DocumentChunkEmbeddingWhereInput> | null
+  sources?: Prisma.MessageSourceListRelationFilter
 }, "id">
 
 export type DocumentChunkOrderByWithAggregationInput = {
@@ -291,6 +294,7 @@ export type DocumentChunkCreateInput = {
   createdAt?: Date | string
   document: Prisma.DocumentCreateNestedOneWithoutChunksInput
   embedding?: Prisma.DocumentChunkEmbeddingCreateNestedOneWithoutDocumentChunkInput
+  sources?: Prisma.MessageSourceCreateNestedManyWithoutDocumentChunkInput
 }
 
 export type DocumentChunkUncheckedCreateInput = {
@@ -301,6 +305,7 @@ export type DocumentChunkUncheckedCreateInput = {
   documentId: string
   createdAt?: Date | string
   embedding?: Prisma.DocumentChunkEmbeddingUncheckedCreateNestedOneWithoutDocumentChunkInput
+  sources?: Prisma.MessageSourceUncheckedCreateNestedManyWithoutDocumentChunkInput
 }
 
 export type DocumentChunkUpdateInput = {
@@ -311,6 +316,7 @@ export type DocumentChunkUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   document?: Prisma.DocumentUpdateOneRequiredWithoutChunksNestedInput
   embedding?: Prisma.DocumentChunkEmbeddingUpdateOneWithoutDocumentChunkNestedInput
+  sources?: Prisma.MessageSourceUpdateManyWithoutDocumentChunkNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateInput = {
@@ -321,6 +327,7 @@ export type DocumentChunkUncheckedUpdateInput = {
   documentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   embedding?: Prisma.DocumentChunkEmbeddingUncheckedUpdateOneWithoutDocumentChunkNestedInput
+  sources?: Prisma.MessageSourceUncheckedUpdateManyWithoutDocumentChunkNestedInput
 }
 
 export type DocumentChunkCreateManyInput = {
@@ -396,6 +403,11 @@ export type DocumentChunkSumOrderByAggregateInput = {
   pageNumber?: Prisma.SortOrder
 }
 
+export type DocumentChunkNullableScalarRelationFilter = {
+  is?: Prisma.DocumentChunkWhereInput | null
+  isNot?: Prisma.DocumentChunkWhereInput | null
+}
+
 export type DocumentChunkScalarRelationFilter = {
   is?: Prisma.DocumentChunkWhereInput
   isNot?: Prisma.DocumentChunkWhereInput
@@ -451,6 +463,22 @@ export type NullableIntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type DocumentChunkCreateNestedOneWithoutSourcesInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutSourcesInput, Prisma.DocumentChunkUncheckedCreateWithoutSourcesInput>
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutSourcesInput
+  connect?: Prisma.DocumentChunkWhereUniqueInput
+}
+
+export type DocumentChunkUpdateOneWithoutSourcesNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutSourcesInput, Prisma.DocumentChunkUncheckedCreateWithoutSourcesInput>
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutSourcesInput
+  upsert?: Prisma.DocumentChunkUpsertWithoutSourcesInput
+  disconnect?: Prisma.DocumentChunkWhereInput | boolean
+  delete?: Prisma.DocumentChunkWhereInput | boolean
+  connect?: Prisma.DocumentChunkWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentChunkUpdateToOneWithWhereWithoutSourcesInput, Prisma.DocumentChunkUpdateWithoutSourcesInput>, Prisma.DocumentChunkUncheckedUpdateWithoutSourcesInput>
+}
+
 export type DocumentChunkUpdateOneRequiredWithoutEmbeddingNestedInput = {
   create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutEmbeddingInput, Prisma.DocumentChunkUncheckedCreateWithoutEmbeddingInput>
   connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutEmbeddingInput
@@ -466,6 +494,7 @@ export type DocumentChunkCreateWithoutDocumentInput = {
   pageNumber?: number | null
   createdAt?: Date | string
   embedding?: Prisma.DocumentChunkEmbeddingCreateNestedOneWithoutDocumentChunkInput
+  sources?: Prisma.MessageSourceCreateNestedManyWithoutDocumentChunkInput
 }
 
 export type DocumentChunkUncheckedCreateWithoutDocumentInput = {
@@ -475,6 +504,7 @@ export type DocumentChunkUncheckedCreateWithoutDocumentInput = {
   pageNumber?: number | null
   createdAt?: Date | string
   embedding?: Prisma.DocumentChunkEmbeddingUncheckedCreateNestedOneWithoutDocumentChunkInput
+  sources?: Prisma.MessageSourceUncheckedCreateNestedManyWithoutDocumentChunkInput
 }
 
 export type DocumentChunkCreateOrConnectWithoutDocumentInput = {
@@ -515,6 +545,62 @@ export type DocumentChunkScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"DocumentChunk"> | Date | string
 }
 
+export type DocumentChunkCreateWithoutSourcesInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  pageNumber?: number | null
+  createdAt?: Date | string
+  document: Prisma.DocumentCreateNestedOneWithoutChunksInput
+  embedding?: Prisma.DocumentChunkEmbeddingCreateNestedOneWithoutDocumentChunkInput
+}
+
+export type DocumentChunkUncheckedCreateWithoutSourcesInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  pageNumber?: number | null
+  documentId: string
+  createdAt?: Date | string
+  embedding?: Prisma.DocumentChunkEmbeddingUncheckedCreateNestedOneWithoutDocumentChunkInput
+}
+
+export type DocumentChunkCreateOrConnectWithoutSourcesInput = {
+  where: Prisma.DocumentChunkWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentChunkCreateWithoutSourcesInput, Prisma.DocumentChunkUncheckedCreateWithoutSourcesInput>
+}
+
+export type DocumentChunkUpsertWithoutSourcesInput = {
+  update: Prisma.XOR<Prisma.DocumentChunkUpdateWithoutSourcesInput, Prisma.DocumentChunkUncheckedUpdateWithoutSourcesInput>
+  create: Prisma.XOR<Prisma.DocumentChunkCreateWithoutSourcesInput, Prisma.DocumentChunkUncheckedCreateWithoutSourcesInput>
+  where?: Prisma.DocumentChunkWhereInput
+}
+
+export type DocumentChunkUpdateToOneWithWhereWithoutSourcesInput = {
+  where?: Prisma.DocumentChunkWhereInput
+  data: Prisma.XOR<Prisma.DocumentChunkUpdateWithoutSourcesInput, Prisma.DocumentChunkUncheckedUpdateWithoutSourcesInput>
+}
+
+export type DocumentChunkUpdateWithoutSourcesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  pageNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  document?: Prisma.DocumentUpdateOneRequiredWithoutChunksNestedInput
+  embedding?: Prisma.DocumentChunkEmbeddingUpdateOneWithoutDocumentChunkNestedInput
+}
+
+export type DocumentChunkUncheckedUpdateWithoutSourcesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  pageNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  documentId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  embedding?: Prisma.DocumentChunkEmbeddingUncheckedUpdateOneWithoutDocumentChunkNestedInput
+}
+
 export type DocumentChunkCreateWithoutEmbeddingInput = {
   id?: string
   content: string
@@ -522,6 +608,7 @@ export type DocumentChunkCreateWithoutEmbeddingInput = {
   pageNumber?: number | null
   createdAt?: Date | string
   document: Prisma.DocumentCreateNestedOneWithoutChunksInput
+  sources?: Prisma.MessageSourceCreateNestedManyWithoutDocumentChunkInput
 }
 
 export type DocumentChunkUncheckedCreateWithoutEmbeddingInput = {
@@ -531,6 +618,7 @@ export type DocumentChunkUncheckedCreateWithoutEmbeddingInput = {
   pageNumber?: number | null
   documentId: string
   createdAt?: Date | string
+  sources?: Prisma.MessageSourceUncheckedCreateNestedManyWithoutDocumentChunkInput
 }
 
 export type DocumentChunkCreateOrConnectWithoutEmbeddingInput = {
@@ -556,6 +644,7 @@ export type DocumentChunkUpdateWithoutEmbeddingInput = {
   pageNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   document?: Prisma.DocumentUpdateOneRequiredWithoutChunksNestedInput
+  sources?: Prisma.MessageSourceUpdateManyWithoutDocumentChunkNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateWithoutEmbeddingInput = {
@@ -565,6 +654,7 @@ export type DocumentChunkUncheckedUpdateWithoutEmbeddingInput = {
   pageNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   documentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sources?: Prisma.MessageSourceUncheckedUpdateManyWithoutDocumentChunkNestedInput
 }
 
 export type DocumentChunkCreateManyDocumentInput = {
@@ -582,6 +672,7 @@ export type DocumentChunkUpdateWithoutDocumentInput = {
   pageNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   embedding?: Prisma.DocumentChunkEmbeddingUpdateOneWithoutDocumentChunkNestedInput
+  sources?: Prisma.MessageSourceUpdateManyWithoutDocumentChunkNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateWithoutDocumentInput = {
@@ -591,6 +682,7 @@ export type DocumentChunkUncheckedUpdateWithoutDocumentInput = {
   pageNumber?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   embedding?: Prisma.DocumentChunkEmbeddingUncheckedUpdateOneWithoutDocumentChunkNestedInput
+  sources?: Prisma.MessageSourceUncheckedUpdateManyWithoutDocumentChunkNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateManyWithoutDocumentInput = {
@@ -602,6 +694,35 @@ export type DocumentChunkUncheckedUpdateManyWithoutDocumentInput = {
 }
 
 
+/**
+ * Count Type DocumentChunkCountOutputType
+ */
+
+export type DocumentChunkCountOutputType = {
+  sources: number
+}
+
+export type DocumentChunkCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  sources?: boolean | DocumentChunkCountOutputTypeCountSourcesArgs
+}
+
+/**
+ * DocumentChunkCountOutputType without action
+ */
+export type DocumentChunkCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DocumentChunkCountOutputType
+   */
+  select?: Prisma.DocumentChunkCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * DocumentChunkCountOutputType without action
+ */
+export type DocumentChunkCountOutputTypeCountSourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageSourceWhereInput
+}
+
 
 export type DocumentChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -612,6 +733,8 @@ export type DocumentChunkSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   embedding?: boolean | Prisma.DocumentChunk$embeddingArgs<ExtArgs>
+  sources?: boolean | Prisma.DocumentChunk$sourcesArgs<ExtArgs>
+  _count?: boolean | Prisma.DocumentChunkCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["documentChunk"]>
 
 export type DocumentChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -647,6 +770,8 @@ export type DocumentChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalA
 export type DocumentChunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
   embedding?: boolean | Prisma.DocumentChunk$embeddingArgs<ExtArgs>
+  sources?: boolean | Prisma.DocumentChunk$sourcesArgs<ExtArgs>
+  _count?: boolean | Prisma.DocumentChunkCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DocumentChunkIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   document?: boolean | Prisma.DocumentDefaultArgs<ExtArgs>
@@ -660,6 +785,7 @@ export type $DocumentChunkPayload<ExtArgs extends runtime.Types.Extensions.Inter
   objects: {
     document: Prisma.$DocumentPayload<ExtArgs>
     embedding: Prisma.$DocumentChunkEmbeddingPayload<ExtArgs> | null
+    sources: Prisma.$MessageSourcePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1064,6 +1190,7 @@ export interface Prisma__DocumentChunkClient<T, Null = never, ExtArgs extends ru
   readonly [Symbol.toStringTag]: "PrismaPromise"
   document<T extends Prisma.DocumentDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentDefaultArgs<ExtArgs>>): Prisma.Prisma__DocumentClient<runtime.Types.Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   embedding<T extends Prisma.DocumentChunk$embeddingArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentChunk$embeddingArgs<ExtArgs>>): Prisma.Prisma__DocumentChunkEmbeddingClient<runtime.Types.Result.GetResult<Prisma.$DocumentChunkEmbeddingPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  sources<T extends Prisma.DocumentChunk$sourcesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentChunk$sourcesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageSourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1516,6 +1643,30 @@ export type DocumentChunk$embeddingArgs<ExtArgs extends runtime.Types.Extensions
    */
   include?: Prisma.DocumentChunkEmbeddingInclude<ExtArgs> | null
   where?: Prisma.DocumentChunkEmbeddingWhereInput
+}
+
+/**
+ * DocumentChunk.sources
+ */
+export type DocumentChunk$sourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MessageSource
+   */
+  select?: Prisma.MessageSourceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MessageSource
+   */
+  omit?: Prisma.MessageSourceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageSourceInclude<ExtArgs> | null
+  where?: Prisma.MessageSourceWhereInput
+  orderBy?: Prisma.MessageSourceOrderByWithRelationInput | Prisma.MessageSourceOrderByWithRelationInput[]
+  cursor?: Prisma.MessageSourceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageSourceScalarFieldEnum | Prisma.MessageSourceScalarFieldEnum[]
 }
 
 /**

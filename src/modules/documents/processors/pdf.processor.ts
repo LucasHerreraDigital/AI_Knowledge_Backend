@@ -40,8 +40,6 @@ export class PdfProcessor {
         currentPage = Number(match[1]) + 1;
         lastIndex = regex.lastIndex;
       }
-
-      // Recuperar el contenido posterior al último marcador.
       const remainingContent = result.text.slice(lastIndex).trim();
 
       if (remainingContent) {
